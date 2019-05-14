@@ -1,0 +1,66 @@
+---
+title: "BUfactsheetscrape"
+author: "Zachary Halvorson"
+date: "May 13, 2019"
+output: html_document
+---
+
+```{r setup}
+library(tidyverse)
+library(tabulizer)
+library(shiny)
+library(miniUI)
+```
+
+## Load all PDF files and use Tabulizer to extract data
+
+```{r import}
+
+
+
+
+```
+
+## Convert extracted data from character to numueric and tidy
+
+```{r convert}
+
+
+gsub(",", "", VARIABLE)
+
+```
+
+## Combine all data into new data frame by year
+
+```{r organize}
+
+
+
+
+
+```
+
+
+
+## Verification by plotting and manual inspection
+
+```{r verify}
+
+
+
+
+```
+
+
+## Save data frame as R object for use in Shiny App
+
+```{r export}
+
+
+
+```
+
+
+
+
+
