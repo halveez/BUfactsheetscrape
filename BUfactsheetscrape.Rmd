@@ -14,10 +14,42 @@ library(miniUI)
 
 ## Load all PDF files and use Tabulizer to extract data
 
+```{r locate}
+
+#First page
+summary <- locate_areas("data/2018.pdf")
+enrollment <- locate_areas("data/2018.pdf")
+freshman <- locate_areas("data/2018.pdf")
+
+#Second page
+degrees <- locate_areas("data/2018.pdf")
+campus <- locate_areas("data/2018.pdf")
+libraries <- locate_areas("data/2018.pdf")
+faculty <- locate_areas("data/2018.pdf")
+tuition <- locate_areas("data/2018.pdf")
+grant <- locate_areas("data/2018.pdf")
+financial <- locate_areas("data/2018.pdf")
+fund <- locate_areas("data/2018.pdf")
+
+```
+
+
 ```{r import}
 
+#First page
+summary_data <- extract_tables(file = "data/2018.pdf", page = 1, area = summary)
+enrollment_data <- extract_tables(file = "data/2018.pdf", page = 1, area = enrollment)
+freshman_data <- extract_tables(file = "data/2018.pdf", page = 1, area = freshman)
 
-
+#Second page
+degrees_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = degrees)
+campus_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = campus)
+libraries_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = libraries)
+faculty_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = faculty)
+tuition_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = tuition)
+grant_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = grant)
+financial_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = financial)
+fund_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = fund)
 
 ```
 
