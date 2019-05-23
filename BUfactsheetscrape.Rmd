@@ -39,7 +39,7 @@ fund_revenue <- locate_areas("data/2018.pdf")
 fund_expense <- locate_areas("data/2018.pdf")
 fund_total <- locate_areas("data/2018.pdf")
 
-all_areas <- list(summary = summary, enrollment_all = enrollment_all, enrollment_charles_FTE = enrollment_charles_FTE, freshman_states = freshman_states, freshman_ethnic = freshman_ethnic, freshman_SAT = freshman_SAT, degrees = degrees, campus = campus, libraries = libraries, faculty_total = faculty_total, faculty_full_time = faculty_full_time, tuition = tuition, grant = grant, financial = financial, fund_revenue = fund_revenue, fund_expense = fund_expense, fund_total = fund_total)
+area_list <- list(summary = summary, enrollment_all = enrollment_all, enrollment_charles_FTE = enrollment_charles_FTE, freshman_states = freshman_states, freshman_ethnic = freshman_ethnic, freshman_SAT = freshman_SAT, degrees = degrees, campus = campus, libraries = libraries, faculty_total = faculty_total, faculty_full_time = faculty_full_time, tuition = tuition, grant = grant, financial = financial, fund_revenue = fund_revenue, fund_expense = fund_expense, fund_total = fund_total)
 
 save(area_list, file = "areas.RData")
 
@@ -48,21 +48,19 @@ save(area_list, file = "areas.RData")
 
 ```{r extract_areas}
 
-#Need to create a function to use the area_list and go through each file in the data folder
-
 all_years <- list.files("data", pattern = "*.pdf", full.names = TRUE)
 
 total_data <- vector("list", length(all_years))
 
 for(i in 1:length(all_years)){
   print(i)
-  for (j in 1:length(all_areas)){
+  for (j in 1:length(area_list)){
     print(j)
-    year_data <- vector("list", 17)
-    if (is.null(all_areas[[j]][[2]])) {
-      year_data[j] <- extract_tables(file = all_years[i], page = 1, area = all_areas[[j]][1])
+    year_data <- vector("list", length(all_years))
+    if (is.null(area_list[[j]][[2]])) {
+      year_data[j] <- extract_tables(file = all_years[i], page = 1, area = area_list[[j]][1])
     } else {
-      year_data[j] <- extract_tables(file = all_years[i], page = 2, area = all_areas[[j]][2])
+      year_data[j] <- extract_tables(file = all_years[i], page = 2, area = area_list[[j]][2])
     }
   }
   total_data[i] <- year_data
