@@ -52,7 +52,9 @@ all_years <- list.files("data", pattern = "*.pdf", full.names = TRUE)
 
 total_data <- vector("list", length(all_years))
 
-for(i in 1:length(all_years)){
+faculty_data <- vector("list", length(all_years))
+
+#for(i in 1:length(all_years)){
   print(i)
   for (j in 1:length(area_list)){
     print(j)
@@ -64,6 +66,10 @@ for(i in 1:length(all_years)){
     }
   }
   total_data[i] <- year_data
+}
+
+for(i in 1:length(all_years)){
+  faculty_data[i] <- extract_areas(file = all_years[i])
 }
 
 #First page
