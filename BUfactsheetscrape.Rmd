@@ -14,7 +14,7 @@ library(miniUI)
 
 ## Load all PDF files and use Tabulizer to extract data
 
-```{r locate}
+```{r define_areas}
 
 #First page
 summary <- locate_areas("data/2018.pdf")
@@ -39,26 +39,49 @@ fund_revenue <- locate_areas("data/2018.pdf")
 fund_expense <- locate_areas("data/2018.pdf")
 fund_total <- locate_areas("data/2018.pdf")
 
+all_areas <- list(summary = summary, enrollment_all = enrollment_all, enrollment_charles_FTE = enrollment_charles_FTE, freshman_states = freshman_states, freshman_ethnic = freshman_ethnic, freshman_SAT = freshman_SAT, degrees = degrees, campus = campus, libraries = libraries, faculty_total = faculty_total, faculty_full_time = faculty_full_time, tuition = tuition, grant = grant, financial = financial, fund_revenue = fund_revenue, fund_expense = fund_expense, fund_total = fund_total)
+
+save(area_list, file = "areas.RData")
 
 ```
 
 
-```{r import}
+```{r extract_areas}
+
+#Need to create a function to use the area_list and go through each file in the data folder
+
+all_years <- list.files("data", pattern = "*.pdf", full.names = TRUE)
+
+total_data <- vector("list", length(all_years))
+
+for(i in 1:length(all_years)){
+  print(i)
+  for (j in 1:length(all_areas)){
+    print(j)
+    year_data <- vector("list", 17)
+    if (is.null(all_areas[[j]][[2]])) {
+      year_data[j] <- extract_tables(file = all_years[i], page = 1, area = all_areas[[j]][1])
+    } else {
+      year_data[j] <- extract_tables(file = all_years[i], page = 2, area = all_areas[[j]][2])
+    }
+  }
+  total_data[i] <- year_data
+}
 
 #First page
-summary_data <- extract_tables(file = "data/2018.pdf", page = 1, area = summary[1])
-enrollment_data <- extract_tables(file = "data/2018.pdf", page = 1, area = enrollment[1])
-freshman_data <- extract_tables(file = "data/2018.pdf", page = 1, area = freshman[1])
+#summary_data <- extract_tables(file = "data/2018.pdf", page = 1, area = summary[1])
+#enrollment_data <- extract_tables(file = "data/2018.pdf", page = 1, area = enrollment[1])
+#freshman_data <- extract_tables(file = "data/2018.pdf", page = 1, area = freshman[1])
 
 #Second page
-degrees_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = degrees[2])
-campus_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = campus[2])
-libraries_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = libraries[2])
-faculty_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = faculty[2])
-tuition_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = tuition[2])
-grant_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = grant[2])
-financial_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = financial[2])
-fund_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = fund[2])
+#degrees_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = degrees[2])
+#campus_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = campus[2])
+#libraries_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = libraries[2])
+#faculty_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = faculty[2])
+#tuition_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = tuition[2])
+#grant_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = grant[2])
+#financial_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = financial[2])
+#fund_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = fund[2])
 
 ```
 
