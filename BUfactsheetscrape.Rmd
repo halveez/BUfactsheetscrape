@@ -55,43 +55,47 @@ total_data <- vector("list", length(all_years))
 faculty_data <- vector("list", length(all_years))
 
 #for(i in 1:length(all_years)){
-  print(i)
-  for (j in 1:length(area_list)){
-    print(j)
-    year_data <- vector("list", length(all_years))
-    if (is.null(area_list[[j]][[2]])) {
-      year_data[j] <- extract_tables(file = all_years[i], page = 1, area = area_list[[j]][1])
-    } else {
-      year_data[j] <- extract_tables(file = all_years[i], page = 2, area = area_list[[j]][2])
-    }
-  }
-  total_data[i] <- year_data
-}
+#  print(i)
+#  for (j in 1:length(area_list)){
+#    print(j)
+#    year_data <- vector("list", length(all_years))
+#    if (is.null(area_list[[j]][[2]])) {
+#      year_data[j] <- extract_tables(file = all_years[i], page = 1, area = area_list[[j]][1])
+#    } else {
+#      year_data[j] <- extract_tables(file = all_years[i], page = 2, area = area_list[[j]][2])
+#    }
+#  }
+#  total_data[i] <- year_data
+#}
+
+#First extract the area
+#Next subset to get the page temp[[2]]
+#NExt convert to data frame temp_df <- as.data.frame(tmep[[2]])
+#Add a year column temp_df$V6 <- YEAR
+#Need to clean up the randomn lettering and work on naming
+#Could ignore the column of names and write it in from scratch instead
+#consider making Full time, part time, and FTE as columns of the type of staff
+
 
 for(i in 1:length(all_years)){
-  faculty_data[i] <- extract_areas(file = all_years[i])
+  
+  extracted <- extract_areas(file = all_years[i])
+  extracted_df <- as.data.frame(extracted[[2]])
+  extracted_df$Year <- all_years[i]
+  
+  datalist[[i]] < extracted_df
 }
 
-#First page
-#summary_data <- extract_tables(file = "data/2018.pdf", page = 1, area = summary[1])
-#enrollment_data <- extract_tables(file = "data/2018.pdf", page = 1, area = enrollment[1])
-#freshman_data <- extract_tables(file = "data/2018.pdf", page = 1, area = freshman[1])
+combined_data <- do.call(cbind, datalist)
 
-#Second page
-#degrees_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = degrees[2])
-#campus_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = campus[2])
-#libraries_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = libraries[2])
-#faculty_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = faculty[2])
-#tuition_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = tuition[2])
-#grant_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = grant[2])
-#financial_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = financial[2])
-#fund_data <- extract_tables(file = "data/2018.pdf", pages = 2, area = fund[2])
 
 ```
 
 ## Convert extracted data from character to numueric and tidy
 
 ```{r convert}
+
+
 
 
 gsub(",", "", VARIABLE)
