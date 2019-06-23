@@ -7,116 +7,48 @@ output: html_document
 
 ```{r setup}
 library(tidyverse)
-library(tabulizer)
-library(shiny)
-library(miniUI)
-```
-
-## Load all PDF files and use Tabulizer to extract data
-
-```{r define_areas}
-
-#First page
-summary <- locate_areas("data/2018.pdf")
-enrollment_all <- locate_areas("data/2018.pdf")
-enrollment_charles_FTE <- locate_areas("data/2018.pdf")
-freshman_states <- locate_areas("data/2018.pdf")
-freshman_ethnic <- locate_areas("data/2018.pdf")
-freshman_SAT <- locate_areas("data/2018.pdf")
-
-
-
-#Second page
-degrees <- locate_areas("data/2018.pdf")
-campus <- locate_areas("data/2018.pdf")
-libraries <- locate_areas("data/2018.pdf")
-faculty_total <- locate_areas("data/2018.pdf")
-faculty_full_time <- locate_areas("data/2018.pdf")
-tuition <- locate_areas("data/2018.pdf")
-grant <- locate_areas("data/2018.pdf")
-financial <- locate_areas("data/2018.pdf")
-fund_revenue <- locate_areas("data/2018.pdf")
-fund_expense <- locate_areas("data/2018.pdf")
-fund_total <- locate_areas("data/2018.pdf")
-
-area_list <- list(summary = summary, enrollment_all = enrollment_all, enrollment_charles_FTE = enrollment_charles_FTE, freshman_states = freshman_states, freshman_ethnic = freshman_ethnic, freshman_SAT = freshman_SAT, degrees = degrees, campus = campus, libraries = libraries, faculty_total = faculty_total, faculty_full_time = faculty_full_time, tuition = tuition, grant = grant, financial = financial, fund_revenue = fund_revenue, fund_expense = fund_expense, fund_total = fund_total)
-
-save(area_list, file = "areas.RData")
 
 ```
 
+## Load all data from CSV
 
-```{r extract_areas}
-
-all_years <- list.files("data", pattern = "*.pdf", full.names = TRUE)
-
-total_data <- vector("list", length(all_years))
-
-faculty_data <- vector("list", length(all_years))
-
-#for(i in 1:length(all_years)){
-#  print(i)
-#  for (j in 1:length(area_list)){
-#    print(j)
-#    year_data <- vector("list", length(all_years))
-#    if (is.null(area_list[[j]][[2]])) {
-#      year_data[j] <- extract_tables(file = all_years[i], page = 1, area = area_list[[j]][1])
-#    } else {
-#      year_data[j] <- extract_tables(file = all_years[i], page = 2, area = area_list[[j]][2])
-#    }
-#  }
-#  total_data[i] <- year_data
-#}
-
-#First extract the area
-#Next subset to get the page temp[[2]]
-#NExt convert to data frame temp_df <- as.data.frame(tmep[[2]])
-#Add a year column temp_df$V6 <- YEAR
-#Need to clean up the randomn lettering and work on naming
-#Could ignore the column of names and write it in from scratch instead
-#consider making Full time, part time, and FTE as columns of the type of staff
+```{r import}
 
 
-for(i in 1:length(all_years)){
-  
-  extracted <- extract_areas(file = all_years[i])
-  extracted_df <- as.data.frame(extracted[[2]])
-  extracted_df$Year <- all_years[i]
-  
-  datalist[[i]] < extracted_df
-}
+combined <- read.csv(file = 'data/combined.csv', header = TRUE)
+faculty_staff <- read.csv(file = 'data/faculty_staff.csv', header = TRUE)
 
-combined_data <- do.call(cbind, datalist)
+#names(df)[names(df) == 'old.var.name'] <- 'new.var.name'
+
+#names(a) <- gsub(x = names(a), pattern = "\\.", replacement = "#")  
 
 
-```
+names(combined)[names(combined) == 'ï..Year'] <- 'Year'
+names(faculty_staff)[names(faculty_staff) == 'ï..Year'] <- 'Year'
 
-## Convert extracted data from character to numueric and tidy
-
-```{r convert}
-
-
-
-
-gsub(",", "", VARIABLE)
-
-```
-
-## Combine all data into new data frame by year
-
-```{r organize}
-
-
+names(combined) <- gsub(x = names(combined), pattern = "\\.", replacement = "_")
+names(faculty_staff) <- gsub(x = names(faculty_staff), pattern = "\\.", replacement = "_")
 
 
 
 ```
-
 
 
 ## Verification by plotting and manual inspection
 
 ```{r verify}
+
+faculty_staff %>% na.omit() %>% 
+    gather(-Year, - Location, key = "some_var_name", value = "some_value_name") %>%
+    ggplot(aes(x = Year, y = some_value_name, color  = Location)) +
+    geom_line() +
+    facet_wrap(~ some_var_name, scales = "free")
+
+combined %>% select_if(is.numeric) %>%
+    gather(-Year, key = "some_var_name", value = "some_value_name") %>%
+    ggplot(aes(x = Year, y = some_value_name)) +
+    geom_line() +
+    facet_wrap(~ some_var_name, scales = "free")
 
 
 
