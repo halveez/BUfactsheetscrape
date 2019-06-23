@@ -3,10 +3,12 @@ title: "BUfactsheetscrape"
 author: "Zachary Halvorson"
 date: "May 13, 2019"
 output: html_document
+runtime: shiny
 ---
 
-```{r setup}
+```{r setup, message=FALSE}
 library(tidyverse)
+library(shiny)
 ```
 
 ## Load all data from CSV
@@ -17,64 +19,60 @@ library(tidyverse)
 combined <- read.csv(file = 'data/combined.csv', header = TRUE)
 faculty_staff <- read.csv(file = 'data/faculty_staff.csv', header = TRUE)
 
-
 #Manual correction of some column names
 names(combined)[names(combined) == 'ï..Year'] <- 'Year'
 names(faculty_staff)[names(faculty_staff) == 'ï..Year'] <- 'Year'
 names(combined) <- gsub(x = names(combined), pattern = "\\.", replacement = "_")
 names(faculty_staff) <- gsub(x = names(faculty_staff), pattern = "\\.", replacement = "_")
 
-
 #We then subset the data for just Charles River Campus and combine both files
 CRC_data <- faculty_staff %>% filter(Location == 'CRC')
 CRC_data <- merge(CRC_data, combined, by="Year")
 
-
-
 ```
-
 
 ## Verification by plotting and manual inspection
 
-```{r verify}
-
-#Create faceted plots for all of the variables for a quick inspection of the data
+```{r verify, fig.height = 10, fig.width = 12, warning=FALSE}
 
 faculty_staff %>% na.omit() %>% 
     gather(-Year, - Location, key = "some_var_name", value = "Variable") %>%
     ggplot(aes(x = Year, y = Variable, color  = Location)) +
     geom_line() +
-    facet_wrap(~ some_var_name, scales = "free")
+    facet_wrap(~ some_var_name, ncol = 4, scales = "free")
+```
+
+```{r verify_2, fig.height = 15, fig.width = 12, warning=FALSE}
 
 combined %>% select_if(is.numeric) %>%
     gather(-Year, key = "some_var_name", value = "Variable") %>%
     ggplot(aes(x = Year, y = Variable)) +
     geom_line() +
-    facet_wrap(~ some_var_name, scales = "free")
-
-CRC_data %>% select_if(is.numeric) %>%
-    gather(-Year, key = "some_var_name", value = "Variable") %>%
-    ggplot(aes(x = Year, y = Variable)) +
-    geom_line() +
-    facet_wrap(~ some_var_name, scales = "free")
-
-
+    facet_wrap(~ some_var_name, ncol = 4, scales = "free")
 
 ```
 
+## Create inline Shiny application
 
-## Save data frame as R object for use in Shiny App
+```{r export, echo = FALSE}
 
-```{r export}
+shinyApp(
 
-bu_data_file <- 
+  ui = fluidPage(
+    selectInput("selected_var", "Variable:",
+                choices = colnames(CRC_data)),
+    plotOutput("line_plot", height = "300px")
+  ),
 
+  server = function(input, output) {
+    output$line_plot = renderPlot({CRC_data %>% group_by(Year) %>% ggplot() + 
+      geom_line(aes(x = Year, y = Fees))
+    })
+  },
 
+)
 
 
 ```
-
-
-
 
 
