@@ -7,27 +7,27 @@ output: html_document
 
 ```{r setup}
 library(tidyverse)
-
 ```
 
 ## Load all data from CSV
 
 ```{r import}
 
-
+#Reading in the data from CSV's that I manually transcribed from the online data sheets
 combined <- read.csv(file = 'data/combined.csv', header = TRUE)
 faculty_staff <- read.csv(file = 'data/faculty_staff.csv', header = TRUE)
 
-#names(df)[names(df) == 'old.var.name'] <- 'new.var.name'
 
-#names(a) <- gsub(x = names(a), pattern = "\\.", replacement = "#")  
-
-
+#Manual correction of some column names
 names(combined)[names(combined) == 'ï..Year'] <- 'Year'
 names(faculty_staff)[names(faculty_staff) == 'ï..Year'] <- 'Year'
-
 names(combined) <- gsub(x = names(combined), pattern = "\\.", replacement = "_")
 names(faculty_staff) <- gsub(x = names(faculty_staff), pattern = "\\.", replacement = "_")
+
+
+#We then subset the data for just Charles River Campus and combine both files
+CRC_data <- faculty_staff %>% filter(Location == 'CRC')
+CRC_data <- merge(CRC_data, combined, by="Year")
 
 
 
@@ -38,18 +38,25 @@ names(faculty_staff) <- gsub(x = names(faculty_staff), pattern = "\\.", replacem
 
 ```{r verify}
 
+#Create faceted plots for all of the variables for a quick inspection of the data
+
 faculty_staff %>% na.omit() %>% 
-    gather(-Year, - Location, key = "some_var_name", value = "some_value_name") %>%
-    ggplot(aes(x = Year, y = some_value_name, color  = Location)) +
+    gather(-Year, - Location, key = "some_var_name", value = "Variable") %>%
+    ggplot(aes(x = Year, y = Variable, color  = Location)) +
     geom_line() +
     facet_wrap(~ some_var_name, scales = "free")
 
 combined %>% select_if(is.numeric) %>%
-    gather(-Year, key = "some_var_name", value = "some_value_name") %>%
-    ggplot(aes(x = Year, y = some_value_name)) +
+    gather(-Year, key = "some_var_name", value = "Variable") %>%
+    ggplot(aes(x = Year, y = Variable)) +
     geom_line() +
     facet_wrap(~ some_var_name, scales = "free")
 
+CRC_data %>% select_if(is.numeric) %>%
+    gather(-Year, key = "some_var_name", value = "Variable") %>%
+    ggplot(aes(x = Year, y = Variable)) +
+    geom_line() +
+    facet_wrap(~ some_var_name, scales = "free")
 
 
 
@@ -59,6 +66,9 @@ combined %>% select_if(is.numeric) %>%
 ## Save data frame as R object for use in Shiny App
 
 ```{r export}
+
+bu_data_file <- 
+
 
 
 
