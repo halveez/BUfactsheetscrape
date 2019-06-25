@@ -58,15 +58,19 @@ combined %>% select_if(is.numeric) %>%
 
 shinyApp(
 
-  ui = fluidPage(
-    selectInput("selected_var", "Variable:",
+  ui <- fluidPage(
+    selectInput("var", label = "Variable:",
                 choices = colnames(CRC_data)),
-    plotOutput("line_plot", height = "300px")
+    plotOutput("line_plot", height = "300px"),
+    textOutput("selection")
   ),
 
-  server = function(input, output) {
-    output$line_plot = renderPlot({CRC_data %>% group_by(Year) %>% ggplot() + 
-      geom_line(aes(x = Year, y = Fees))
+  server <- function(input, output) {
+    output$line_plot <- renderPlot({CRC_data %>% group_by(Year) %>% ggplot(aes(x = Year, y = input$var)) + 
+      geom_line()
+    })
+    output$selection <- renderText({
+      paste("You have selected", input$var)
     })
   },
 
